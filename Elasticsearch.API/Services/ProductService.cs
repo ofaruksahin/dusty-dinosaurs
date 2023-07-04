@@ -1,5 +1,6 @@
 ﻿using Elasticsearch.API.DTOs;
 using Elasticsearch.API.Repositories;
+using System.Collections.Immutable;
 using System.Net;
 
 namespace Elasticsearch.API.Services
@@ -20,9 +21,32 @@ namespace Elasticsearch.API.Services
             var response = await _productRepository.SaveAsync(product);
 
             if (response == null)
-                return ResponseDto<ProductDto>.Fail(new List<string> { "Kayıt esnasında bir hata meydana geldi."}, HttpStatusCode.InternalServerError);
+                return ResponseDto<ProductDto>.Fail(new List<string> { "Kayıt esnasında bir hata meydana geldi." }, HttpStatusCode.InternalServerError);
 
             return ResponseDto<ProductDto>.Success(response.CreateDto(), HttpStatusCode.Created);
+        }
+
+        public async Task<ResponseDto<ImmutableList<ProductDto>>> GetAllAsync()
+        {
+            var products = await _productRepository.GetAllAsync();
+
+            return ResponseDto<ImmutableList<ProductDto>>.Success(products.Select(f => f.CreateDto()).ToImmutableList(), HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<ProductDto>> GetByIdAsync(string id)
+        {
+            var product = await _productRepository.GetByIdAsync(id);
+            if (product is null)
+                return ResponseDto<ProductDto>.Fail(new List<string> { "Kayıt bulunamadı" }, HttpStatusCode.NotFound);
+            return ResponseDto<ProductDto>.Success(product.CreateDto(), HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<NoContentDto>> UpdateAsync(string id,ProductUpdateDto request)
+        {
+            var response = await _productRepository.UpdateAsync(id,request.CreateProduct());
+            if (!response)
+                return ResponseDto<NoContentDto>.Fail(new List<string> { "Kayıt güncellenemedi" }, HttpStatusCode.InternalServerError);
+            return ResponseDto<NoContentDto>.Success(new NoContentDto(), HttpStatusCode.OK);
         }
     }
 }

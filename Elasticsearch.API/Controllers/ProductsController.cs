@@ -19,5 +19,26 @@ namespace Elasticsearch.API.Controllers
             var response = await _productService.SaveAsync(request);
             return CreateActionResult(response);
         }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var response = await _productService.GetAllAsync();
+            return CreateActionResult(response);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(string id)
+        {
+            var response = await _productService.GetByIdAsync(id);
+            return CreateActionResult(response);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(string id, [FromBody]ProductUpdateDto request)
+        {
+            var response = await _productService.UpdateAsync(id,request);
+            return CreateActionResult(response);
+        }
     }
 }
