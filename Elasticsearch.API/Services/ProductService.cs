@@ -48,5 +48,13 @@ namespace Elasticsearch.API.Services
                 return ResponseDto<NoContentDto>.Fail(new List<string> { "Kayıt güncellenemedi" }, HttpStatusCode.InternalServerError);
             return ResponseDto<NoContentDto>.Success(new NoContentDto(), HttpStatusCode.OK);
         }
+
+        public async Task<ResponseDto<NoContentDto>> DeleteAsync(string id)
+        {
+            var response = await _productRepository.DeleteAsync(id);
+            if (!response)
+                return ResponseDto<NoContentDto>.Fail(new List<string> { "Kayıt silinemedi" }, HttpStatusCode.InternalServerError);
+            return ResponseDto<NoContentDto>.Success(new NoContentDto(), HttpStatusCode.OK);
+        }
     }
 }
