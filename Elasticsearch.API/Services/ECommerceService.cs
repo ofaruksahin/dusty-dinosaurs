@@ -32,5 +32,11 @@ namespace Elasticsearch.API.Services
             var eCommerceResponse = await _repository.PrefixQuery(customerFirstName);
             return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse,HttpStatusCode.OK);
         }
+
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> RangeQuery(double fromPrice,double toPrice)
+        {
+            var eCommerceResponse = await _repository.RangeQuery(fromPrice, toPrice);
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
+        }
     }
 }

@@ -29,5 +29,11 @@ namespace Elasticsearch.API.Controllers
         {
             return CreateActionResult(await _eCommerceService.PrefixQuery(prefix));
         }
+
+        [HttpGet("range-query")]
+        public async Task<IActionResult> RangeQuery(double fromPrice, double toPrice)
+        {
+            return CreateActionResult(await _eCommerceService.RangeQuery(fromPrice, toPrice));
+        }
     }
 }
