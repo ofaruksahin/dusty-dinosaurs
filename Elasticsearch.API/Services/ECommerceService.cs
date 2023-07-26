@@ -3,6 +3,7 @@ using Elasticsearch.API.Models.ECommerceModel;
 using Elasticsearch.API.Repositories;
 using System.Collections.Immutable;
 using System.Net;
+using System.Runtime.CompilerServices;
 
 namespace Elasticsearch.API.Services
 {
@@ -30,13 +31,32 @@ namespace Elasticsearch.API.Services
         public async Task<ResponseDto<ImmutableList<ECommerce>>> PrefixQuery(string customerFirstName)
         {
             var eCommerceResponse = await _repository.PrefixQuery(customerFirstName);
-            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse,HttpStatusCode.OK);
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
         }
 
-        public async Task<ResponseDto<ImmutableList<ECommerce>>> RangeQuery(double fromPrice,double toPrice)
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> RangeQuery(double fromPrice, double toPrice)
         {
             var eCommerceResponse = await _repository.RangeQuery(fromPrice, toPrice);
             return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
         }
+
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> MatchAll()
+        {
+            var eCommerceResponse = await _repository.MatchAll();
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> Paginate(int page, int pageSize)
+        {
+            var eCommerceResponse = await _repository.Paginate(page, pageSize);
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> WildCardQuery(string customerFullName)
+        {
+            var eCommerceResponse = await _repository.WildCardQuery(customerFullName);
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
+        }
+
     }
 }

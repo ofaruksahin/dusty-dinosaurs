@@ -35,5 +35,23 @@ namespace Elasticsearch.API.Controllers
         {
             return CreateActionResult(await _eCommerceService.RangeQuery(fromPrice, toPrice));
         }
+
+        [HttpGet("match-all")]
+        public async Task<IActionResult> MatchAll()
+        {
+            return CreateActionResult(await _eCommerceService.MatchAll());
+        }
+
+        [HttpGet("paginate")]
+        public async Task<IActionResult> Paginate(int page,int pageSize)
+        {
+            return CreateActionResult(await _eCommerceService.Paginate(page, pageSize));
+        }
+
+        [HttpGet("wildcard")]
+        public async Task<IActionResult> WildCard(string customerFullName)
+        {
+            return CreateActionResult(await _eCommerceService.WildCardQuery(customerFullName));
+        }
     }
 }

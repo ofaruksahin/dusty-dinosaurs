@@ -42,7 +42,7 @@ namespace Elasticsearch.API.Repositories
                 Terms = new TermsQueryField(terms.AsReadOnly())
             };
 
-            var result = await  _client.SearchAsync<ECommerce>(s => s.Index(_indexName).Query(termsQuery));
+            var result = await _client.SearchAsync<ECommerce>(s => s.Index(_indexName).Query(termsQuery));
 
             foreach (var item in result.Hits)
                 item.Source.Id = item.Id;
@@ -66,6 +66,50 @@ namespace Elasticsearch.API.Repositories
 
             foreach (var item in result.Hits)
                 item.Source.Id = item.Id;
+
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<ImmutableList<ECommerce>> MatchAll()
+        {
+            var result = await _client.SearchAsync<ECommerce>(s =>
+                s.Index(_indexName)
+                .Size(100)
+                .Query(q => q.MatchAll()));
+
+            foreach (var item in result.Hits)
+                item.Source.Id = item.Id;
+
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<ImmutableList<ECommerce>> Paginate(int page, int pageSize)
+        {
+            int from = (page - 1) * pageSize;
+
+            var result = await _client.SearchAsync<ECommerce>(s =>
+                s.Index(_indexName)
+                .Size(pageSize)
+                .From(from)
+                .Query(q => q.MatchAll()));
+
+            foreach (var item in result.Hits)
+                item.Source.Id = item.Id;
+
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<ImmutableList<ECommerce>> WildCardQuery(string customerFullName)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s =>
+                s.Index(_indexName)
+                .Query(q =>
+                    q.Wildcard(w =>
+                        w.Field(f => f.CustomerFullName.Suffix("keyword"))
+                            .Wildcard(customerFullName))));
+
+            foreach(var item in result.Hits)
+                item.Source.Id = item.Id;   
 
             return result.Documents.ToImmutableList();
         }
