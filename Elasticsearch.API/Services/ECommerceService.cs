@@ -58,5 +58,16 @@ namespace Elasticsearch.API.Services
             return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
         }
 
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> FuzzyQuery(string customerFullName)
+        {
+            var eCommerceResponse = await _repository.FuzzyQueryAsync(customerFullName);
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> MatchQueryFullTextAsync(string categoryName)
+        {
+            var eCommerceResponse = await _repository.MatchQueryFullTextAsync(categoryName);
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
+        }
     }
 }

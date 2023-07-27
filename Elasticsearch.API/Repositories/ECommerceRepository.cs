@@ -108,8 +108,41 @@ namespace Elasticsearch.API.Repositories
                         w.Field(f => f.CustomerFullName.Suffix("keyword"))
                             .Wildcard(customerFullName))));
 
-            foreach(var item in result.Hits)
-                item.Source.Id = item.Id;   
+            foreach (var item in result.Hits)
+                item.Source.Id = item.Id;
+
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<ImmutableList<ECommerce>> FuzzyQueryAsync(string customerName)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s =>
+                s.Index(_indexName)
+                .Query(q =>
+                    q.Fuzzy(fu =>
+                        fu.Field(f => f.CustomerFirstName.Suffix("keyword"))
+                            .Value(customerName)
+                                .Fuzziness(new Fuzziness(2)))));
+
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id;
+
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<ImmutableList<ECommerce>> MatchQueryFullTextAsync(string categoryName)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s =>
+                s.Index(_indexName)
+                    .Query(q =>
+                        q.Match(m =>
+                            m.Field(f =>
+                                f.Category)
+                                .Query(categoryName)
+                                    .Operator(Operator.And))));
+
+            foreach(var hit in result.Hits)
+                hit.Source.Id = hit.Id;
 
             return result.Documents.ToImmutableList();
         }
