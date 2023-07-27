@@ -43,7 +43,7 @@ namespace Elasticsearch.API.Controllers
         }
 
         [HttpGet("paginate")]
-        public async Task<IActionResult> Paginate(int page,int pageSize)
+        public async Task<IActionResult> Paginate(int page, int pageSize)
         {
             return CreateActionResult(await _eCommerceService.Paginate(page, pageSize));
         }
@@ -64,6 +64,40 @@ namespace Elasticsearch.API.Controllers
         public async Task<IActionResult> MatchQueryFullText(string categoryName)
         {
             return CreateActionResult(await _eCommerceService.MatchQueryFullTextAsync(categoryName));
+        }
+
+        [HttpGet("match-boolean-prefix")]
+        public async Task<IActionResult> MatchBooleanPrefix(string customerFullName)
+        {
+            return CreateActionResult(await _eCommerceService.MatchBooleanPrefix(customerFullName));
+        }
+
+        [HttpGet("match-phrase")]
+        public async Task<IActionResult> MatchPhrase(string customerFullName)
+        {
+            return CreateActionResult(await _eCommerceService.MatchPhrase(customerFullName));
+        }
+
+        [HttpGet("compound-query-example-one")]
+        public async Task<IActionResult> CompoundQueryExampleOne(
+            string cityName,
+            double taxfulTotalPrice,
+            string categoryName,
+            string manufacturer)
+        {
+            return CreateActionResult(await _eCommerceService.CompoundQueryExampleOne(cityName, taxfulTotalPrice, categoryName, manufacturer));
+        }
+
+        [HttpGet("compound-query-example-two")]
+        public async Task<IActionResult> CompoundQueryExampleTwo(string customerFullName)
+        {
+            return CreateActionResult(await _eCommerceService.CompoundQueryExampleTwo(customerFullName));
+        }
+
+        [HttpGet("multi-match-query")]
+        public async Task<IActionResult> MultiMatchQuery(string customerName)
+        {
+            return CreateActionResult(await _eCommerceService.MultiMatchQueryFullTextAsync(customerName));
         }
     }
 }

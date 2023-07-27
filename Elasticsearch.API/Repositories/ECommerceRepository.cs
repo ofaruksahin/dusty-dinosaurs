@@ -141,7 +141,111 @@ namespace Elasticsearch.API.Repositories
                                 .Query(categoryName)
                                     .Operator(Operator.And))));
 
-            foreach(var hit in result.Hits)
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id;
+
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<ImmutableList<ECommerce>> MatchBooleanPrefix(string customerFullName)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s =>
+                s.Index(_indexName)
+                    .Query(q =>
+                        q.MatchBoolPrefix(m =>
+                            m.Field(f =>
+                                f.CustomerFullName)
+                                    .Query(customerFullName)
+                                        .Operator(Operator.And))));
+
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id;
+
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<ImmutableList<ECommerce>> MatchPhrase(string customerFullName)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s =>
+                s.Index(_indexName)
+                    .Query(q =>
+                        q.MatchPhrase(m =>
+                            m.Field(f =>
+                                f.CustomerFullName)
+                                    .Query(customerFullName))));
+
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id;
+
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<ImmutableList<ECommerce>> CompoundQueryExampleOne(
+            string cityName,
+            double taxfulTotalPrice,
+            string categoryName,
+            string manufacturer)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s =>
+                s.Index(_indexName)
+                    .Query(q =>
+                        q.Bool(b =>
+                            b.Must(m =>
+                                m.Term(c =>
+                                    c.Field("geoip.city_name")
+                                        .Value(cityName)))
+                            .MustNot(mn =>
+                                mn.Range(r =>
+                                    r.NumberRange(nr =>
+                                        nr
+                                            .Field(f => f.TaxfulTotalPrice)
+                                                .Lte(taxfulTotalPrice))))
+                            .Should(s =>
+                                s.Term(t =>
+                                    t.Field(f =>
+                                        f.Category.Suffix("keyword"))
+                                            .Value(categoryName)))
+                            .Filter(f =>
+                                f.Term(t =>
+                                    t.Field("manufacturer.keyword")
+                                        .Value(manufacturer))))));
+
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id;
+
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<ImmutableList<ECommerce>> CompoundQueryExampleTwo(string customerFullName)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s =>
+                s.Index(_indexName)
+                    .Query(q =>
+                        q.Bool(b =>
+                            b.Must(m =>
+                                m.Match(m =>
+                                    m.Field(f => f.CustomerFullName)
+                                        .Query(customerFullName))
+                                .Prefix(p => p.Field(
+                                        f => f.CustomerFullName.Suffix("keyword")).Value(customerFullName))))));
+
+            foreach (var hit in result.Hits)
+                hit.Source.Id = hit.Id;
+
+            return result.Documents.ToImmutableList();
+        }
+
+        public async Task<ImmutableList<ECommerce>> MultiMatchQueryFullTextAsync(string name)
+        {
+            var result = await _client.SearchAsync<ECommerce>(s =>
+                s.Index(_indexName)
+                    .Query(q =>
+                        q.MultiMatch(mm =>
+                            mm.Fields(new Field("customer_first_name")
+                                .And(new Field("customer_last_name"))
+                                .And(new Field("customer_full_name"))).Query(name))));
+
+            foreach (var hit in result.Hits)
                 hit.Source.Id = hit.Id;
 
             return result.Documents.ToImmutableList();

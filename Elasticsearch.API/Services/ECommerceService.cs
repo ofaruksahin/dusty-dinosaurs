@@ -69,5 +69,39 @@ namespace Elasticsearch.API.Services
             var eCommerceResponse = await _repository.MatchQueryFullTextAsync(categoryName);
             return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
         }
+
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> MatchBooleanPrefix(string customerFullName)
+        {
+            var eCommerceResponse = await _repository.MatchBooleanPrefix(customerFullName);
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> MatchPhrase(string customerFullName)
+        {
+            var eCommerceResponse = await _repository.MatchPhrase(customerFullName);
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> CompoundQueryExampleOne(
+            string cityName,
+            double taxfulTotalPrice,
+            string categoryName,
+            string manufacturer)
+        {
+            var eCommerceResponse = await _repository.CompoundQueryExampleOne(cityName, taxfulTotalPrice, categoryName, manufacturer);
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> CompoundQueryExampleTwo(string customerFullName)
+        {
+            var eCommerceResponse = await _repository.CompoundQueryExampleTwo(customerFullName);
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
+        }
+
+        public async Task<ResponseDto<ImmutableList<ECommerce>>> MultiMatchQueryFullTextAsync(string customerFullName)
+        {
+            var eCommerceResponse = await _repository.MultiMatchQueryFullTextAsync(customerFullName);
+            return ResponseDto<ImmutableList<ECommerce>>.Success(eCommerceResponse, HttpStatusCode.OK);
+        }
     }
 }
