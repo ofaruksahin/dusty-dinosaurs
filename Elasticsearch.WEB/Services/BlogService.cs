@@ -19,7 +19,7 @@ namespace Elasticsearch.WEB.Services
             {
                 Title = viewModel.Title,
                 Content = viewModel.Content,
-                Tags = viewModel.Tags,
+                Tags = viewModel.Tags.Split(',').ToList(),
                 UserId = Guid.NewGuid()
             };
 
