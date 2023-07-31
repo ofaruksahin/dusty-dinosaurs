@@ -25,5 +25,15 @@ namespace Elasticsearch.WEB.Services
 
             return await _blogRepository.SaveAsync(blog);
         }
+
+        public async Task<List<Blog>> SearchAsync(string searchText)
+        {
+            return await _blogRepository.SearchAsync(searchText);
+        }
+
+        public async Task<List<Blog>> GetAllAsync()
+        {
+            return await _blogRepository.GetAllAsync();
+        }
     }
 }
